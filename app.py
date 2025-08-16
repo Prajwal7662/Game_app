@@ -1,13 +1,7 @@
-import numpy as np
-a = np.array([1,2,3,4,5])
-print(a)
-
-import streamlit as st
-st.title("My first app")
-
-
 import streamlit as st
 import random
+
+st.title("My first app")
 
 # Set a session state for the number to guess
 if "number" not in st.session_state:
@@ -35,4 +29,5 @@ if st.button("Guess"):
         if st.button("Play Again"):
             st.session_state.number = random.randint(1, 100)
             st.session_state.guesses = 0
+
 
