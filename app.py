@@ -1,39 +1,70 @@
 import streamlit as st
 import random
-from PIL import Image
-st.title("My first app")
 
-# --- Game Setup ---
-if "number" not in st.session_state:
-    st.session_state.number = random.randint(1, 100)
-if "guesses" not in st.session_state:
-    st.session_state.guesses = 0
+# Set up session state for score
+if "user_score" not in st.session_state:
+    st.session_state.user_score = 0
+if "ai_score" not in st.session_state:
+    st.session_state.ai_score = 0
 
-st.title("🎮 Guess the Number Game")
-st.write("I'm thinking of a number between **1 and 100**. Can you guess it?")
+st.title("✊✋✌️ Rock, Paper, Scissors")
 
-# --- Image Upload ---
-st.sidebar.header("🖼️ Upload your avatar!")
-uploaded_image = st.sidebar.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+# Choices
+choices = ["Rock", "Paper", "Scissors"]
+emoji_map = {
+    "Rock": "✊",
+    "Paper": "✋",
+    "Scissors": "✌️"
+}
 
-if uploaded_image:
-    image = Image.open(uploaded_image)
-    st.sidebar.image(image, caption="Your Avatar", use_column_width=True)
+st.write("Choose your move:")
 
-# --- Game Logic ---
-guess = st.number_input("Enter your guess:", min_value=1, max_value=100, step=1)
+# Create buttons
+col1, col2, col3 = st.columns(3)
+user_choice = None
 
-if st.button("Guess"):
-    st.session_state.guesses += 1
-    if guess < st.session_state.number:
-        st.warning("Too low! Try again.")
-    elif guess > st.session_state.number:
-        st.warning("Too high! Try again.")
+with col1:
+    if st.button("✊ Rock"):
+        user_choice = "Rock"
+with col2:
+    if st.button("✋ Paper"):
+        user_choice = "Paper"
+with col3:
+    if st.button("✌️ Scissors"):
+        user_choice = "Scissors"
+
+# Game logic
+def determine_winner(user, ai):
+    if user == ai:
+        return "draw"
+    elif (
+        (user == "Rock" and ai == "Scissors") or
+        (user == "Paper" and ai == "Rock") or
+        (user == "Scissors" and ai == "Paper")
+    ):
+        return "user"
     else:
-        st.success(f"🎉 Correct! The number was {st.session_state.number}.")
-        st.balloons()
-        st.write(f"You guessed it in {st.session_state.guesses} tries!")
-        if st.button("Play Again"):
-            st.session_state.number = random.randint(1, 100)
-            st.session_state.guesses = 0
+        return "ai"
+
+if user_choice:
+    ai_choice = random.choice(choices)
+    st.write(f"You chose: {emoji_map[user_choice]} **{user_choice}**")
+    st.write(f"AI chose: {emoji_map[ai_choice]} **{ai_choice}**")
+
+    winner = determine_winner(user_choice, ai_choice)
+
+    if winner == "draw":
+        st.info("🤝 It's a draw!")
+    elif winner == "user":
+        st.success("🎉 You win!")
+        st.session_state.user_score += 1
+    else:
+        st.error("😢 You lose!")
+        st.session_state.ai_score += 1
+
+    # Show scores
+    st.markdown("---")
+    st.subheader("📊 Scoreboard")
+    st.write(f"**You**: {st.session_state.user_score}")
+    st.write(f"**AI**: {st.session_state.ai_score}")
 
