@@ -1,5 +1,7 @@
 import streamlit as st
 import random
+st.title("My first app")
+
 
 # Set up session state for score
 if "user_score" not in st.session_state:
@@ -67,4 +69,5 @@ if user_choice:
     st.subheader("📊 Scoreboard")
     st.write(f"**You**: {st.session_state.user_score}")
     st.write(f"**AI**: {st.session_state.ai_score}")
+
 
